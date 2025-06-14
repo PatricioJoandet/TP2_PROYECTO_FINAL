@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "name": "apirestful",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js --ignore /*.json",
+    "test-manual": "node test/api-prueba-manual.js",
+    "test-gen-prod": "mocha test/producto.test.js --timeout 10000"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^9.8.0",
+    "axios": "^1.9.0",
+    "chai": "^5.2.0",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "mocha": "^11.6.0",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.15.1",
+    "supertest": "^7.1.1"
+  }
+}
