@@ -1,9 +1,42 @@
 import mongoose from "mongoose";
 
-const productoSchema = mongoose.Schema({
-    nombre: String,
-    precio: Number,
-    stock: Number
-},{versionKey: false})
+const pedidoSchema = mongoose.Schema(
+  {
+    usuario: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "usuario",
+      required: true,
+    },
+    platos: [
+      {
+        plato: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "plato",
+          required: true,
+        },
+        cantidad: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+      },
+    ],
+    total: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    estado: {
+      type: String,
+      enum: ["preparando", "enviado"],
+      default: "preparando",
+    },
+    fechaPedido: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { versionKey: false }
+);
 
-export const PedidoModel = mongoose.model('productos', productoSchema)
+export const PedidoModel = mongoose.model("pedido", pedidoSchema);

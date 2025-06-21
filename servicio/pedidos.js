@@ -1,66 +1,97 @@
-import PedidosMongo from '../model/DAO/pedidosMongoDB.js'
-import { validar } from './validaciones/pedidos.js'
-
+import PedidosMongo from "../model/DAO/pedidosMongoDB.js";
+import { validar } from "./validaciones/pedidos.js";
+import enviarMail from "./helpers/emailHelper.js";
 
 class Servicio {
-    #model
+  #model;
 
-    constructor() {
-        this.#model = PedidosMongo
+  constructor() {
+    this.#model = PedidosMongo;
+  }
+
+  obtenerPedidos = async (id) => {
+    if (id) {
+      const pedido = await this.#model.obtenerPedido(id);
+      return pedido;
+    } else {
+      const pedidos = await this.#model.obtenerPedidos();
+      return pedidos;
     }
+  };
 
-    obtenerProductos = async id => {
-        if(id) {
-            const producto = await this.#model.obtenerProducto(id)
-            return producto
-        }
-        else {
-            const productos = await this.#model.obtenerProductos()
-            return productos
-        }
+  obtenerPedidosPorUsuario = async (usuarioId) => {
+    return await this.#model.obtenerPedidosPorUsuario(usuarioId);
+  };
+
+  guardarPedido = async (pedido) => {
+    const res = validar(pedido);
+    if (res.result) {
+      const pedidoGuardado = await this.#model.guardarPedido(pedido);
+      return pedidoGuardado;
+    } else {
+      //console.log(res.error)
+      throw new Error(res.error.details[0].message);
     }
+  };
 
-    guardarProducto = async producto => {
-        const res = validar(producto)
-        if(res.result) {
-            const productoGuardado = await this.#model.guardarProducto(producto)
-            return productoGuardado
-        }
-        else {
-            //console.log(res.error)
-            throw new Error(res.error.details[0].message)
-        }
+  actualizarPedido = async (id, pedido) => {
+    const pedidoActualizado = await this.#model.actualizarPedido(id, pedido);
+    return pedidoActualizado;
+  };
+
+  enviarPedido = async (id) => {
+    const pedido = await this.#model.obtenerPedido(id);
+    if (!pedido) {
+      throw new Error(`Pedido con id ${id} no encontrado`);
+    } else if (pedido.estado === "enviado") {
+      throw new Error(`Pedido con id ${id} ya ha sido enviado`);
     }
+    pedido.estado = "enviado";
+    const pedidoEnviado = await this.#model.actualizarPedido(id, pedido);
+    enviarMail(pedidoEnviado.usuario, pedidoEnviado);
+    return pedidoEnviado;
+  };
 
-    actualizarProducto = async (id,producto) => {
-        const productoActualizado = await this.#model.actualizarProducto(id,producto)
-        return productoActualizado
+  enviarPedidoTest = async () => {
+    await enviarMail();
+  };
+
+  borrarPedido = async (id) => {
+    const pedidoEliminado = await this.#model.borrarPedido(id);
+    return pedidoEliminado;
+  };
+
+  obtenerEstadisticas = async (opcion) => {
+    const pedidos = await this.#model.obtenerPedidos();
+    switch (opcion) {
+      case "cantidad":
+        return { cantidad: pedidos.length };
+
+      case "avg-precio":
+        return {
+          "precio promedio": +(
+            pedidos.reduce((acc, p) => acc + p.precio, 0) / pedidos.length
+          ).toFixed(2),
+        };
+
+      case "min-precio":
+        return {
+          "precio mínimo": +Math.min(...pedidos.map((p) => p.precio)).toFixed(
+            2
+          ),
+        };
+
+      case "max-precio":
+        return {
+          "precio máximo": +Math.max(...pedidos.map((p) => p.precio)).toFixed(
+            2
+          ),
+        };
+
+      default:
+        return { error: `opción estadistica '${opcion}' no soportada` };
     }
-
-    borrarProducto = async id => {
-        const productoEliminado = await this.#model.borrarProducto(id)
-        return productoEliminado
-    }
-
-    obtenerEstadisticas = async opcion => {
-        const productos = await this.#model.obtenerProductos()
-        switch(opcion) {
-            case 'cantidad':
-                return { cantidad: productos.length }
-
-            case 'avg-precio':
-                return { 'precio promedio': +(productos.reduce((acc,p) => acc + p.precio, 0) / productos.length).toFixed(2) }
-
-            case 'min-precio':
-                return { 'precio mínimo': +Math.min(...productos.map(p => p.precio)).toFixed(2) }
-
-            case 'max-precio':
-                return { 'precio máximo': +Math.max(...productos.map(p => p.precio)).toFixed(2) }
-
-            default:
-                return { error: `opción estadistica '${opcion}' no soportada` }
-        }
-    }
+  };
 }
 
-export default Servicio
+export default Servicio;

@@ -1,9 +1,26 @@
 import mongoose from "mongoose";
 
-const productoSchema = mongoose.Schema({
-    nombre: String,
-    precio: Number,
-    stock: Number
-},{versionKey: false})
+const userSchema = mongoose.Schema(
+  {
+    nombre: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    telefono: {
+      type: String,
+      required: true,
+    },
+    direccion: {
+      type: String,
+      required: true,
+    },
+  },
+  { versionKey: false }
+);
 
-export const UserModel = mongoose.model('productos', productoSchema)
+export const UserModel = mongoose.model("usuario", userSchema);

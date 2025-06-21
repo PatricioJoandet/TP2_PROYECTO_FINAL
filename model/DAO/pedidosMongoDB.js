@@ -1,44 +1,56 @@
-import CnxMongoDB from "../DBMongo.js"
-import { PedidoModel } from "./models/pedido.js"
+import CnxMongoDB from "../DBMongo.js";
+import { PedidoModel } from "./models/pedido.js";
 
 class ModelMongoDB {
-    constructor() {}
+  constructor() {}
 
-    obtenerProductos = async () => {
-        if(!CnxMongoDB.connectionOK) throw new Error('ERROR CNX BASE DE DATOS!!!')
-        const productos = await ProductoModel.find()
-        return productos
-    }
+  obtenerPedidos = async () => {
+    if (!CnxMongoDB.connectionOK)
+      throw new Error("Error de conexión a la base de datos");
+    const pedidos = await PedidoModel.find();
+    return pedidos;
+  };
 
-    obtenerProducto = async id => {
-        if(!CnxMongoDB.connectionOK) throw new Error('ERROR CNX BASE DE DATOS!!!')
-        const producto = await ProductoModel.findOne({_id:id})
-        return producto
-    }
+  obtenerPedido = async (id) => {
+    if (!CnxMongoDB.connectionOK)
+      throw new Error("Error de conexión a la base de datos");
+    const pedido = await PedidoModel.findOne({ _id: id });
+    return pedido;
+  };
 
-    guardarProducto = async producto => {
-        if(!CnxMongoDB.connectionOK) throw new Error('ERROR CNX BASE DE DATOS!!!')
-        
-        const productoModel = new ProductoModel(producto)
-        const productoGuardado = await productoModel.save()
-        return productoGuardado
-    }
+  obtenerPedidosPorUsuario = async (usuarioId) => {
+    if (!CnxMongoDB.connectionOK)
+      throw new Error("Error de conexión a la base de datos");
+    const pedidos = await PedidoModel.find({ usuario: usuarioId });
+    return pedidos;
+  };
 
-    actualizarProducto = async (id, producto) => {
-        if(!CnxMongoDB.connectionOK) throw new Error('ERROR CNX BASE DE DATOS!!!')
+  guardarPedido = async (pedido) => {
+    if (!CnxMongoDB.connectionOK)
+      throw new Error("Error de conexión a la base de datos");
 
-        await ProductoModel.updateOne({_id:id}, {$set: producto})
-        const productoActualizado = await this.obtenerProducto(id)
-        return productoActualizado
-    }
+    const pedidoModel = new PedidoModel(pedido);
+    const pedidoGuardado = await pedidoModel.save();
+    return pedidoGuardado;
+  };
 
-    borrarProducto = async id => {
-        if(!CnxMongoDB.connectionOK) throw new Error('ERROR CNX BASE DE DATOS!!!')
+  actualizarPedido = async (id, pedido) => {
+    if (!CnxMongoDB.connectionOK)
+      throw new Error("Error de conexión a la base de datos");
 
-        const productoBorrado = await this.obtenerProducto(id)
-        await ProductoModel.deleteOne({_id: id})
-        return productoBorrado
-    }
+    await PedidoModel.updateOne({ _id: id }, { $set: pedido });
+    const pedidoActualizado = await this.obtenerPedido(id);
+    return pedidoActualizado;
+  };
+
+  borrarPedido = async (id) => {
+    if (!CnxMongoDB.connectionOK)
+      throw new Error("Error de conexión a la base de datos");
+
+    const pedidoBorrado = await this.obtenerPedido(id);
+    await PedidoModel.deleteOne({ _id: id });
+    return pedidoBorrado;
+  };
 }
 
-export default ModelMongoDB
+export default ModelMongoDB;

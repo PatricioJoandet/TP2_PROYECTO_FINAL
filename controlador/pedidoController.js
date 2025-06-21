@@ -7,48 +7,71 @@ class Controlador {
     this.#servicio = new Servicio(persistencia);
   }
 
-  obtenerProductos = async (req, res) => {
+  obtenerPedidos = async (req, res) => {
     try {
       const { id } = req.params;
-      const productos = await this.#servicio.obtenerProductos(id);
-      res.json(productos);
+      const pedidos = await this.#servicio.obtenerPedidos(id);
+      res.json(pedidos);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   };
 
-  guardarProducto = async (req, res) => {
+  obtenerPedidoUser = async (req, res) => {
     try {
-      const producto = req.body;
-      if (!Object.keys(producto).length)
-        throw new Error("El producto está vacío");
+      const { userId } = req.params;
+      const pedidos = await this.#servicio.ob(userId);
+      res.json(pedidos);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
-      const productoGuardado = await this.#servicio.guardarProducto(producto);
-      res.json(productoGuardado);
+  guardarPedido = async (req, res) => {
+    try {
+      const pedido = req.body;
+      if (!Object.keys(pedido).length) throw new Error("El pedido está vacío");
+
+      const pedidoGuardado = await this.#servicio.guardarPedido(pedido);
+      res.json(pedidoGuardado);
     } catch (error) {
       //res.status(500).json({ error: error.details[0].message })
       res.status(500).json({ error: error.message });
     }
   };
 
-  actualizarProducto = async (req, res) => {
+  actualizarPedido = async (req, res) => {
     const { id } = req.params;
-    const producto = req.body;
-    const productoActualizado = await this.#servicio.actualizarProducto(
-      id,
-      producto
-    );
+    const pedido = req.body;
+    const pedidoActualizado = await this.#servicio.actualizarPedido(id, pedido);
     res
-      .status(productoActualizado ? 200 : 404)
-      .json(productoActualizado ? productoActualizado : {});
+      .status(pedidoActualizado ? 200 : 404)
+      .json(pedidoActualizado ? pedidoActualizado : {});
   };
 
-  borrarProducto = async (req, res) => {
+  enviarPedidoTest = async (req, res) => {
+    try {
+      await this.#servicio.enviarPedidoTest();
+      res.status(200).json();
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  enviarPedido = async (req, res) => {
     const { id } = req.params;
-    const productoEliminado = await this.#servicio.borrarProducto(id);
+    const pedidoEnviado = await this.#servicio.enviarPedido(id);
     res
-      .status(productoEliminado ? 200 : 404)
-      .json(productoEliminado ? productoEliminado : {});
+      .status(pedidoEnviado ? 200 : 404)
+      .json(pedidoEnviado ? pedidoEnviado : {});
+  };
+
+  borrarPedido = async (req, res) => {
+    const { id } = req.params;
+    const pedidoEliminado = await this.#servicio.borrarPedido(id);
+    res
+      .status(pedidoEliminado ? 200 : 404)
+      .json(pedidoEliminado ? pedidoEliminado : {});
   };
 
   obtenerEstadisticas = async (req, res) => {
