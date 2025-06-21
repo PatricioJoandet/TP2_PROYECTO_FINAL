@@ -1,26 +1,27 @@
-import express from 'express'
-import Controlador from '../controlador/pedidoController.js'
-
+import express from "express";
+import Controlador from "../controlador/pedidoController.js";
 
 class Router {
-    #controlador
+  #controlador;
 
-    constructor(persistencia) {
-        this.#controlador = new Controlador(persistencia)
-    }
+  constructor(persistencia) {
+    this.#controlador = new Controlador(persistencia);
+  }
 
-    start() {    
-        const router = express.Router()
+  start() {
+    const router = express.Router();
 
-        router.get('/:id?', this.#controlador.obtenerProductos)
-        router.post('/', this.#controlador.guardarProducto)
-        router.put('/:id', this.#controlador.actualizarProducto)
-        router.delete('/:id', this.#controlador.borrarProducto)
+    router.get("/test", this.#controlador.enviarPedidoTest);
+    // router.get("/:id?", this.#controlador.obtenerPedidos);
+    // router.post("/", this.#controlador.guardarPedido);
+    // router.put("/:id", this.#controlador.enviarPedido);
+    // router.put("/id", this.#controlador.actualizarPedido);
+    router.delete("/:id", this.#controlador.borrarPedido);
 
-        router.get('/estadisticas/:opcion', this.#controlador.obtenerEstadisticas)
+    // router.get("/estadisticas/:opcion", this.#controlador.obtenerEstadisticas);
 
-        return router
-    }
+    return router;
+  }
 }
 
-export default Router
+export default Router;
