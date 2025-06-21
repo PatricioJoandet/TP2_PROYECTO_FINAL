@@ -6,17 +6,20 @@ Alta, modificación y baja de clientes
 
 Alta, modificación y baja de pedidos
 
+Alta, modificación y baja de platos
+
 Casos de media/alta complejidad:
 
-Enviar notificaciones por mail/telegram
+Enviar notificaciones por mail ✅
 
-Servidor se conecta a APIS externas (Usando axios). 
+Servidor se conecta a APIS externas (Usando axios). ✅
+
+Enviar pdf con resumen del pedido
+Generar pdf con estadisticas
 
 Ejemplos:
 
-API de clima para ajustar el menú (ej: si llueve → recomendación de sopas).
-
-API de cotizaciones para menú en dólares.
+API de clima para ajustar el menú (ej: si llueve → recomendación de sopas). 🔍
 
 Generar informe sobre total de ingresos por día/semana/mes.
 
