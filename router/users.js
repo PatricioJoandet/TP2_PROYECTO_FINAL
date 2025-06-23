@@ -12,12 +12,11 @@ class Router {
     start() {    
         const router = express.Router()
 
-        router.get('/:id?', this.#controlador.obtenerProductos)
-        router.post('/', this.#controlador.guardarProducto)
-        router.put('/:id', this.#controlador.actualizarProducto)
-        router.delete('/:id', this.#controlador.borrarProducto)
+        router.get('/:id?', this.#controlador.obtenerUsuarios)
+        router.post('/', this.#controlador.guardarUsuario)
+        router.put('/:id', this.#controlador.actualizarUsuario)
+        router.delete('/:id', this.#controlador.borrarUsuario)
 
-        router.get('/estadisticas/:opcion', this.#controlador.obtenerEstadisticas)
 
         return router
     }

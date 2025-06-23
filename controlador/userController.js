@@ -1,4 +1,4 @@
-import Servicio from "../servicio/pedidos.js";
+import Servicio from "../servicio/users.js";
 
 class Controlador {
   #servicio;
@@ -7,54 +7,48 @@ class Controlador {
     this.#servicio = new Servicio(persistencia);
   }
 
-  obtenerProductos = async (req, res) => {
+  obtenerUsuarios = async (req, res) => {
     try {
       const { id } = req.params;
-      const productos = await this.#servicio.obtenerProductos(id);
-      res.json(productos);
+      const usuario = await this.#servicio.obtenerUsuarios(id);
+      res.json(usuario);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   };
 
-  guardarProducto = async (req, res) => {
+  guardarUsuario = async (req, res) => {
     try {
-      const producto = req.body;
-      if (!Object.keys(producto).length)
-        throw new Error("El producto está vacío");
+      const usuario = req.body;
+      if (!Object.keys(usuario).length)
+        throw new Error("El usuario está vacío");
 
-      const productoGuardado = await this.#servicio.guardarProducto(producto);
-      res.json(productoGuardado);
+      const usuarioGuardado = await this.#servicio.guardarUsuario(usuario);
+      res.json(usuarioGuardado);
     } catch (error) {
       //res.status(500).json({ error: error.details[0].message })
       res.status(500).json({ error: error.message });
     }
   };
 
-  actualizarProducto = async (req, res) => {
+  actualizarUsuario = async (req, res) => {
     const { id } = req.params;
-    const producto = req.body;
-    const productoActualizado = await this.#servicio.actualizarProducto(
+    const usuario = req.body;
+    const usuarioActualizado = await this.#servicio.actualizarUsuario(
       id,
-      producto
+      usuario
     );
     res
-      .status(productoActualizado ? 200 : 404)
-      .json(productoActualizado ? productoActualizado : {});
+      .status(usuarioActualizado ? 200 : 404)
+      .json(usuarioActualizado ? usuarioActualizado : {});
   };
 
-  borrarProducto = async (req, res) => {
+  borrarUsuario = async (req, res) => {
     const { id } = req.params;
-    const productoEliminado = await this.#servicio.borrarProducto(id);
+    const usuarioEliminado = await this.#servicio.borrarUsuario(id);
     res
-      .status(productoEliminado ? 200 : 404)
-      .json(productoEliminado ? productoEliminado : {});
-  };
-
-  obtenerEstadisticas = async (req, res) => {
-    const { opcion } = req.params;
-    const estadisticas = await this.#servicio.obtenerEstadisticas(opcion);
-    res.json({ estadisticas });
+      .status(usuarioEliminado ? 200 : 404)
+      .json(usuarioEliminado ? usuarioEliminado : {});
   };
 }
 

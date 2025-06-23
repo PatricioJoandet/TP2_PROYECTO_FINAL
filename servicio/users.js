@@ -5,26 +5,26 @@ import { validar } from './validaciones/users.js'
 class Servicio {
     #model
 
-    constructor(persistencia) {
-        this.#model = ModelFactory.get(persistencia)
+    constructor() {
+        this.#model = new UserMongo()
     }
 
-    obtenerProductos = async id => {
+    obtenerUsuarios = async id => {
         if(id) {
-            const producto = await this.#model.obtenerProducto(id)
-            return producto
+            const usuario = await this.#model.obtenerUsuario(id)
+            return usuario
         }
         else {
-            const productos = await this.#model.obtenerProductos()
-            return productos
+            const usuarios = await this.#model.obtenerUsuarios()
+            return usuarios
         }
     }
 
-    guardarProducto = async producto => {
-        const res = validar(producto)
+    guardarUsuario = async usuario => {
+        const res = validar(usuario)
         if(res.result) {
-            const productoGuardado = await this.#model.guardarProducto(producto)
-            return productoGuardado
+            const usuarioGuardado = await this.#model.guardarUsuario(usuario)
+            return usuarioGuardado
         }
         else {
             //console.log(res.error)
@@ -32,35 +32,16 @@ class Servicio {
         }
     }
 
-    actualizarProducto = async (id,producto) => {
-        const productoActualizado = await this.#model.actualizarProducto(id,producto)
-        return productoActualizado
+    actualizarUsuario = async (id,usuario) => {
+        const usuarioActualizado = await this.#model.actualizarUsuario(id,usuario)
+        return usuarioActualizado
     }
 
-    borrarProducto = async id => {
-        const productoEliminado = await this.#model.borrarProducto(id)
-        return productoEliminado
+    borrarUsuario = async id => {
+        const usuarioEliminado = await this.#model.borrarUsuario(id)
+        return usuarioEliminado
     }
 
-    obtenerEstadisticas = async opcion => {
-        const productos = await this.#model.obtenerProductos()
-        switch(opcion) {
-            case 'cantidad':
-                return { cantidad: productos.length }
-
-            case 'avg-precio':
-                return { 'precio promedio': +(productos.reduce((acc,p) => acc + p.precio, 0) / productos.length).toFixed(2) }
-
-            case 'min-precio':
-                return { 'precio mínimo': +Math.min(...productos.map(p => p.precio)).toFixed(2) }
-
-            case 'max-precio':
-                return { 'precio máximo': +Math.max(...productos.map(p => p.precio)).toFixed(2) }
-
-            default:
-                return { error: `opción estadistica '${opcion}' no soportada` }
-        }
-    }
 }
 
 export default Servicio
