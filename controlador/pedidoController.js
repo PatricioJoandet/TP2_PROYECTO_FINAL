@@ -31,11 +31,9 @@ class Controlador {
     try {
       const pedido = req.body;
       if (!Object.keys(pedido).length) throw new Error("El pedido está vacío");
-
       const pedidoGuardado = await this.#servicio.guardarPedido(pedido);
       res.json(pedidoGuardado);
     } catch (error) {
-      //res.status(500).json({ error: error.details[0].message })
       res.status(500).json({ error: error.message });
     }
   };
@@ -49,21 +47,16 @@ class Controlador {
       .json(pedidoActualizado ? pedidoActualizado : {});
   };
 
-  enviarPedidoTest = async (req, res) => {
+  enviarPedido = async (req, res) => {
     try {
-      await this.#servicio.enviarPedidoTest();
-      res.status(200).json();
+      const { id } = req.params;
+      const pedidoEnviado = await this.#servicio.enviarPedido(id);
+      res
+        .status(pedidoEnviado ? 200 : 404)
+        .json(pedidoEnviado ? pedidoEnviado : {});
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  };
-
-  enviarPedido = async (req, res) => {
-    const { id } = req.params;
-    const pedidoEnviado = await this.#servicio.enviarPedido(id);
-    res
-      .status(pedidoEnviado ? 200 : 404)
-      .json(pedidoEnviado ? pedidoEnviado : {});
   };
 
   borrarPedido = async (req, res) => {
@@ -74,9 +67,8 @@ class Controlador {
       .json(pedidoEliminado ? pedidoEliminado : {});
   };
 
-  obtenerEstadisticas = async (req, res) => {
-    const { opcion } = req.params;
-    const estadisticas = await this.#servicio.obtenerEstadisticas(opcion);
+  estadisticas = async (req, res) => {
+    const estadisticas = await this.#servicio.estadisticas();
     res.json({ estadisticas });
   };
 }

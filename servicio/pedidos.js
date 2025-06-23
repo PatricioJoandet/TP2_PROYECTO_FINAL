@@ -1,12 +1,21 @@
 import PedidosMongo from "../model/DAO/pedidosMongoDB.js";
+import UserMongo from "../model/DAO/userMongoDB.js";
+import PlatosMongo from "../model/DAO/platosMongoDB.js";
+import platos from "./platos.js";
+import users from "./users.js";
 import { validar } from "./validaciones/pedidos.js";
 import enviarMail from "./helpers/emailHelper.js";
+import calcularDiaPedidos from "./helpers/diasHelper.js";
 
 class Servicio {
   #model;
+  #userService;
+  #platosService;
 
   constructor() {
-    this.#model = PedidosMongo;
+    this.#model = new PedidosMongo();
+    this.#platosService = new platos();
+    this.#userService = new users();
   }
 
   obtenerPedidos = async (id) => {
@@ -23,18 +32,77 @@ class Servicio {
     return await this.#model.obtenerPedidosPorUsuario(usuarioId);
   };
 
+  #calcularTotal = (platos) => {
+    return platos.reduce(
+      (total, plato) => total + plato.precio * plato.cantidad,
+      0
+    );
+  };
+
+  #validarUsuario = async (usuarioId) => {
+    const usuario = await this.#userService.obtenerUsers(usuarioId);
+    if (!usuario) {
+      throw new Error(`Usuario con id ${usuarioId} no encontrado`);
+    }
+    return usuario;
+  };
+
+  #procesarPlatos = async (platos) => {
+    const platosFinal = [];
+
+    for (const p of platos) {
+      const plato = await this.#platosService.obtenerPlatos(p.id);
+      if (!plato) {
+        throw new Error(`Plato con id ${p.id} no encontrado`);
+      }
+      platosFinal.push({
+        id: plato[0]._id,
+        nombre: plato[0].nombre,
+        precio: plato[0].precio,
+        cantidad: p.cantidad,
+      });
+    }
+    return platosFinal;
+  };
+
   guardarPedido = async (pedido) => {
     const res = validar(pedido);
+    console.log(res);
+
     if (res.result) {
-      const pedidoGuardado = await this.#model.guardarPedido(pedido);
-      return pedidoGuardado;
+      const usuario = await this.#validarUsuario(pedido.usuario);
+      const platosFinal = await this.#procesarPlatos(pedido.platos);
+
+      pedido.platos = platosFinal;
+      pedido.email = usuario.email;
+      pedido.total = this.#calcularTotal(pedido.platos);
+
+      return await this.#model.guardarPedido(pedido);
     } else {
-      //console.log(res.error)
       throw new Error(res.error.details[0].message);
     }
   };
 
+  //revisar
   actualizarPedido = async (id, pedido) => {
+    const pedidoExistente = await this.#model.obtenerPedido(id);
+    if (!pedidoExistente) {
+      throw new Error(`Pedido con id ${id} no encontrado`);
+    }
+
+    if (pedido.usuario) {
+      const usuario = await this.#validarUsuario(pedido.usuario);
+      pedido.email = usuario.email;
+    }
+
+    if (pedido.platos) {
+      const platosFinal = await this.#procesarPlatos(pedido.platos);
+      pedido.platos = platosFinal;
+      console.log(pedido.platos);
+
+      pedido.total = this.#calcularTotal(pedido.platos);
+    }
+
     const pedidoActualizado = await this.#model.actualizarPedido(id, pedido);
     return pedidoActualizado;
   };
@@ -47,13 +115,10 @@ class Servicio {
       throw new Error(`Pedido con id ${id} ya ha sido enviado`);
     }
     pedido.estado = "enviado";
-    const pedidoEnviado = await this.#model.actualizarPedido(id, pedido);
-    enviarMail(pedidoEnviado.usuario, pedidoEnviado);
-    return pedidoEnviado;
-  };
 
-  enviarPedidoTest = async () => {
-    await enviarMail();
+    const pedidoEnviado = await this.#model.actualizarPedido(id, pedido);
+    enviarMail(pedidoEnviado);
+    return pedidoEnviado;
   };
 
   borrarPedido = async (id) => {
@@ -61,36 +126,43 @@ class Servicio {
     return pedidoEliminado;
   };
 
-  obtenerEstadisticas = async (opcion) => {
+  estadisticas = async () => {
     const pedidos = await this.#model.obtenerPedidos();
-    switch (opcion) {
-      case "cantidad":
-        return { cantidad: pedidos.length };
 
-      case "avg-precio":
-        return {
-          "precio promedio": +(
-            pedidos.reduce((acc, p) => acc + p.precio, 0) / pedidos.length
-          ).toFixed(2),
-        };
+    let total = 0;
+    let totalPlatos = 0;
+    let minPrecio = Infinity;
+    let maxPrecio = -Infinity;
 
-      case "min-precio":
-        return {
-          "precio mínimo": +Math.min(...pedidos.map((p) => p.precio)).toFixed(
-            2
-          ),
-        };
+    for (const p of pedidos) {
+      if (p.total < minPrecio) {
+        minPrecio = p.total;
+      }
 
-      case "max-precio":
-        return {
-          "precio máximo": +Math.max(...pedidos.map((p) => p.precio)).toFixed(
-            2
-          ),
-        };
+      if (p.total > maxPrecio) {
+        maxPrecio = p.total;
+      }
 
-      default:
-        return { error: `opción estadistica '${opcion}' no soportada` };
+      const platosEnPedido = p.platos.reduce(
+        (sum, plato) => sum + plato.cantidad,
+        0
+      );
+
+      total += p.total;
+      totalPlatos += platosEnPedido;
+      console.log(p.total);
     }
+    let promedioPlatos = totalPlatos / pedidos.length;
+    let promedioPrecio = total / pedidos.length;
+    let dia = calcularDiaPedidos(pedidos);
+    return {
+      "cantidad pedidos": pedidos.length,
+      "precio promedio": +promedioPrecio.toFixed(2),
+      "precio mínimo": +minPrecio.toFixed(2),
+      "precio máximo": +maxPrecio.toFixed(2),
+      "platos promedio por pedido": +promedioPlatos.toFixed(2),
+      "dia mayor pedidos": dia,
+    };
   };
 }
 
