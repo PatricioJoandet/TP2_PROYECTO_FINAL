@@ -4,40 +4,40 @@ import { UserModel } from "./models/user.js";
 class ModelMongoDB {
   constructor() {}
 
-  obtenerProductos = async () => {
+  obtenerUsuarios = async () => {
     if (!CnxMongoDB.connectionOK) throw new Error("ERROR CNX BASE DE DATOS!!!");
-    const productos = await ProductoModel.find();
-    return productos;
+    const usuarios = await UserModel.find();
+    return usuarios;
   };
 
-  obtenerProducto = async (id) => {
+  obtenerUsuario = async (id) => {
     if (!CnxMongoDB.connectionOK) throw new Error("ERROR CNX BASE DE DATOS!!!");
-    const producto = await ProductoModel.findOne({ _id: id });
-    return producto;
+    const usuario = await UserModel.findOne({ _id: id });
+    return usuario;
   };
 
-  guardarProducto = async (producto) => {
+  guardarUsuario = async (usuario) => {
     if (!CnxMongoDB.connectionOK) throw new Error("ERROR CNX BASE DE DATOS!!!");
 
-    const productoModel = new ProductoModel(producto);
-    const productoGuardado = await productoModel.save();
-    return productoGuardado;
+    const usuarioModel = new UserModel(usuario);
+    const usuarioGuardado = await usuarioModel.save();
+    return usuarioGuardado;
   };
 
-  actualizarProducto = async (id, producto) => {
+  actualizarUsuario = async (id, usuario) => {
     if (!CnxMongoDB.connectionOK) throw new Error("ERROR CNX BASE DE DATOS!!!");
 
-    await ProductoModel.updateOne({ _id: id }, { $set: producto });
-    const productoActualizado = await this.obtenerProducto(id);
-    return productoActualizado;
+    await UserModel.updateOne({ _id: id }, { $set: usuario });
+    const usuarioActualizado = await this.obtenerUsuario(id);
+    return usuarioActualizado;
   };
 
-  borrarProducto = async (id) => {
+  borrarUsuario = async (id) => {
     if (!CnxMongoDB.connectionOK) throw new Error("ERROR CNX BASE DE DATOS!!!");
 
-    const productoBorrado = await this.obtenerProducto(id);
-    await ProductoModel.deleteOne({ _id: id });
-    return productoBorrado;
+    const usuarioBorrado = await this.obtenerUsuario(id);
+    await UserModel.deleteOne({ _id: id });
+    return usuarioBorrado;
   };
 }
 
