@@ -39,10 +39,10 @@ class Controlador {
     }
   };
 
-  actualizarPlato = async (req, res) => {
+  updatePlato = async (req, res) => {
     const { id } = req.params;
     const plato = req.body;
-    const platoActualizado = await this.#servicio.actualizarPlato(id, plato);
+    const platoActualizado = await this.#servicio.updatePlato(id, plato);
     res
       .status(platoActualizado ? 200 : 404)
       .json(platoActualizado ? platoActualizado : {});

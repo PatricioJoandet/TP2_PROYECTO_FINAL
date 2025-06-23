@@ -14,8 +14,8 @@ class Router {
     router.post("/", this.#controlador.guardarPlato);
     router.get("/recomendacion", this.#controlador.obtenerPlatosPorTemperatura);
     router.get("/:id?", this.#controlador.obtenerPlatos);
-    // router.put("/:id", this.#controlador.actualizarPlato);
-    // router.delete("/:id", this.#controlador.borrarPlato);
+    router.put("/:id", this.#controlador.updatePlato);
+    router.delete("/:id", this.#controlador.borrarPlato);
 
     return router;
   }
