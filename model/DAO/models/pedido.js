@@ -7,13 +7,15 @@ const pedidoSchema = mongoose.Schema(
       ref: "usuario",
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+      match: /.+\@.+\..+/,
+    },
     platos: [
       {
-        plato: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "plato",
-          required: true,
-        },
+        nombre: { type: String, required: true },
+        precio: { type: Number, required: true, min: 0 },
         cantidad: {
           type: Number,
           required: true,

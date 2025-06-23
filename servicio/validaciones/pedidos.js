@@ -1,21 +1,22 @@
-//https://www.npmjs.com/package/joi?activeTab=readme
-//https://joi.dev/
-//https://joi.dev/api/?v=17.13.3
-
 import Joi from "joi";
 
-export const validar = (producto) => {
-  const productosSchema = Joi.object({
-    nombre: Joi.string().required(),
-    precio: Joi.number().min(0).max(1000000).required(),
-    stock: Joi.number().integer().min(0).max(999).required(),
+export const validar = (pedido) => {
+  const pedidosSchema = Joi.object({
+    usuario: Joi.string().required(),
+    platos: Joi.array()
+      .items(
+        Joi.object({
+          plato: Joi.string().required(),
+          cantidad: Joi.number().integer().min(1).required(),
+        })
+      )
+      .min(1)
+      .required(),
   });
 
-  const { error } = productosSchema.validate(producto);
+  const { error } = pedidosSchema.validate(pedido);
   if (error) {
     return { result: false, error };
   }
   return { result: true };
 };
-
-//console.log(validar({ nombre: 'DDR', precio: 4567, stock: 45 }))

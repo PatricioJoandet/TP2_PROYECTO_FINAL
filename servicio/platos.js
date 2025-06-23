@@ -25,8 +25,6 @@ class Servicio {
 
   obtenerPlatosPorTemperatura = async () => {
     const temperatura = await obtenerClima();
-    console.log(`Temperatura actual: ${temperatura}°C`);
-
     let platos = [];
     if (temperatura < 10) {
       platos = await this.#model.obtenerPlatoPorCalorias({ $gt: 600 });
