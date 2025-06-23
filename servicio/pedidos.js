@@ -40,7 +40,7 @@ class Servicio {
   };
 
   #validarUsuario = async (usuarioId) => {
-    const usuario = await this.#userService.obtenerUsers(usuarioId);
+    const usuario = await this.#userService.obtenerUsuarios(usuarioId);
     if (!usuario) {
       throw new Error(`Usuario con id ${usuarioId} no encontrado`);
     }
@@ -49,16 +49,15 @@ class Servicio {
 
   #procesarPlatos = async (platos) => {
     const platosFinal = [];
-
     for (const p of platos) {
-      const plato = await this.#platosService.obtenerPlatos(p.id);
+      const plato = await this.#platosService.obtenerPlatos(p.plato);
       if (!plato) {
         throw new Error(`Plato con id ${p.id} no encontrado`);
       }
       platosFinal.push({
-        id: plato[0]._id,
-        nombre: plato[0].nombre,
-        precio: plato[0].precio,
+        _id: plato._id,
+        nombre: plato.nombre,
+        precio: plato.precio,
         cantidad: p.cantidad,
       });
     }
@@ -67,8 +66,6 @@ class Servicio {
 
   guardarPedido = async (pedido) => {
     const res = validar(pedido);
-    console.log(res);
-
     if (res.result) {
       const usuario = await this.#validarUsuario(pedido.usuario);
       const platosFinal = await this.#procesarPlatos(pedido.platos);
