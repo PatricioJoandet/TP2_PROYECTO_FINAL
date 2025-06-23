@@ -25,6 +25,8 @@ class Servicio {
 
   obtenerPlatosPorTemperatura = async () => {
     const temperatura = await obtenerClima();
+    console.log(`Temperatura actual: ${temperatura}°C`);
+
     let platos = [];
     if (temperatura < 10) {
       platos = await this.#model.obtenerPlatoPorCalorias({ $gt: 600 });
@@ -50,9 +52,15 @@ class Servicio {
     }
   };
 
-  actualizarPlato = async (id, plato) => {
-    const platoActualizado = await this.#model.actualizarPlato(id, plato);
+  updatePlato = async (id, plato) => {
+    const res = validar(plato);
+    if (res.result){
+    const platoActualizado = await this.#model.updatePlato(id, plato);
     return platoActualizado;
+    }
+    else {
+      throw new Error(res.error.details[0].message);
+    }
   };
 
   borrarPlato = async (id) => {
