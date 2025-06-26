@@ -4,7 +4,7 @@ const get = () => ({
   nombre: faker.person.fullName(),
   email: faker.internet.email().toLowerCase(),
   telefono: faker.phone.number(),
-  direccion: `${faker.location.streetAddress()}, ${faker.location.city()}`,
+  direccion: `${faker.location.streetAddress()}`,
 })
 
 export default { get }
