@@ -4,7 +4,8 @@ import PlatosMongo from "../model/DAO/platosMongoDB.js";
 import platos from "./platos.js";
 import users from "./users.js";
 import { validar } from "./validaciones/pedidos.js";
-import enviarMail from "./helpers/emailHelper.js";
+// import enviarMail from "./helpers/emailHelper.js";
+import enviarMail from "./helpers/emailHelperPDF.js";
 import calcularDiaPedidos from "./helpers/diasHelper.js";
 
 class Servicio {

@@ -1,14 +1,56 @@
-//import { faker } from "@faker-js/faker/locale/es";
-import { faker } from "@faker-js/faker/locale/en";
+import { faker } from "@faker-js/faker/locale/es"
 
-const get = _ => ({
-    nombre: faker.commerce.product(),
-    precio: faker.number.float({ min: 10, max: 10000, multipleOf: 0.01 }),
-    stock: faker.number.int({ min: 0, max: 900 })
-})
+// Generador que crea pedidos con platos aleatorios de una lista
+class GeneradorPedido {
+  constructor(platosDisponibles = []) {
+    this.platos = platosDisponibles
+  }
 
-//console.log( get() )
+  // Actualizar lista de platos disponibles
+  setPlatosDisponibles(platos) {
+    this.platos = platos
+  }
 
-export default {
-    get
+  // Generar pedido con platos aleatorios
+  get(usuarioId) {
+    if (this.platos.length === 0) {
+      throw new Error("No hay platos disponibles para generar pedido")
+    }
+
+    // Elegir entre 1 y 3 platos diferentes
+    const cantidadTiposPlatos = faker.number.int({
+      min: 1,
+      max: Math.min(3, this.platos.length),
+    })
+
+    const platosElegidos = faker.helpers.arrayElements(this.platos, cantidadTiposPlatos)
+
+    return {
+      usuario: usuarioId,
+      platos: platosElegidos.map((plato) => ({
+        plato: plato._id,
+        cantidad: faker.number.int({ min: 1, max: 3 }),
+      })),
+    }
+  }
+
+  // Generar pedido grande (más platos)
+  getPedidoGrande(usuarioId) {
+    const cantidadTiposPlatos = faker.number.int({
+      min: 3,
+      max: Math.min(5, this.platos.length),
+    })
+
+    const platosElegidos = faker.helpers.arrayElements(this.platos, cantidadTiposPlatos)
+
+    return {
+      usuario: usuarioId,
+      platos: platosElegidos.map((plato) => ({
+        plato: plato._id,
+        cantidad: faker.number.int({ min: 2, max: 5 }),
+      })),
+    }
+  }
 }
+
+export default GeneradorPedido

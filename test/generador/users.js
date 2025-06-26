@@ -1,14 +1,10 @@
-//import { faker } from "@faker-js/faker/locale/es";
-import { faker } from "@faker-js/faker/locale/en";
+import { faker } from "@faker-js/faker/locale/es"
 
-const get = _ => ({
-    nombre: faker.commerce.product(),
-    precio: faker.number.float({ min: 10, max: 10000, multipleOf: 0.01 }),
-    stock: faker.number.int({ min: 0, max: 900 })
+const get = () => ({
+  nombre: faker.person.fullName(),
+  email: faker.internet.email().toLowerCase(),
+  telefono: faker.phone.number(),
+  direccion: `${faker.location.streetAddress()}`,
 })
 
-//console.log( get() )
-
-export default {
-    get
-}
+export default { get }
