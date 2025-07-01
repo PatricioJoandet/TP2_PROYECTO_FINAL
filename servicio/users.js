@@ -1,47 +1,42 @@
-import UserMongo from '../model/DAO/userMongoDB.js'
-import { validar } from './validaciones/users.js'
-
+import UserMongo from "../model/DAO/userMongoDB.js";
+import { validar } from "./validaciones/users.js";
 
 class Servicio {
-    #model
+  #model;
 
-    constructor() {
-        this.#model = new UserMongo()
+  constructor() {
+    this.#model = new UserMongo();
+  }
+
+  obtenerUsuarios = async (id) => {
+    if (id) {
+      const usuario = await this.#model.obtenerUsuario(id);
+      return usuario;
+    } else {
+      const usuarios = await this.#model.obtenerUsuarios();
+      return usuarios;
     }
+  };
 
-    obtenerUsuarios = async id => {
-        if(id) {
-            const usuario = await this.#model.obtenerUsuario(id)
-            return usuario
-        }
-        else {
-            const usuarios = await this.#model.obtenerUsuarios()
-            return usuarios
-        }
+  guardarUsuario = async (usuario) => {
+    const res = validar(usuario);
+    if (res.result) {
+      const usuarioGuardado = await this.#model.guardarUsuario(usuario);
+      return usuarioGuardado;
+    } else {
+      throw new Error(res.error.details[0].message);
     }
+  };
 
-    guardarUsuario = async usuario => {
-        const res = validar(usuario)
-        if(res.result) {
-            const usuarioGuardado = await this.#model.guardarUsuario(usuario)
-            return usuarioGuardado
-        }
-        else {
-            //console.log(res.error)
-            throw new Error(res.error.details[0].message)
-        }
-    }
+  actualizarUsuario = async (id, usuario) => {
+    const usuarioActualizado = await this.#model.actualizarUsuario(id, usuario);
+    return usuarioActualizado;
+  };
 
-    actualizarUsuario = async (id,usuario) => {
-        const usuarioActualizado = await this.#model.actualizarUsuario(id,usuario)
-        return usuarioActualizado
-    }
-
-    borrarUsuario = async id => {
-        const usuarioEliminado = await this.#model.borrarUsuario(id)
-        return usuarioEliminado
-    }
-
+  borrarUsuario = async (id) => {
+    const usuarioEliminado = await this.#model.borrarUsuario(id);
+    return usuarioEliminado;
+  };
 }
 
-export default Servicio
+export default Servicio;

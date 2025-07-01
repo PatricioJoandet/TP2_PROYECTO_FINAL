@@ -34,7 +34,6 @@ class Controlador {
       const platoGuardado = await this.#servicio.guardarPlato(plato);
       res.json(platoGuardado);
     } catch (error) {
-      //res.status(500).json({ error: error.details[0].message })
       res.status(500).json({ error: error.message });
     }
   };

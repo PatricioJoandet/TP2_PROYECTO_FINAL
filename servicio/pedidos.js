@@ -1,11 +1,9 @@
 import PedidosMongo from "../model/DAO/pedidosMongoDB.js";
-import UserMongo from "../model/DAO/userMongoDB.js";
-import PlatosMongo from "../model/DAO/platosMongoDB.js";
 import platos from "./platos.js";
 import users from "./users.js";
 import { validar } from "./validaciones/pedidos.js";
-// import enviarMail from "./helpers/emailHelper.js";
-import enviarMail from "./helpers/emailHelperPDF.js";
+import enviarMail from "./helpers/emailHelper.js";
+import generarPDFPedido from "./helpers/pdfHelper.js";
 import calcularDiaPedidos from "./helpers/diasHelper.js";
 
 class Servicio {
@@ -81,7 +79,6 @@ class Servicio {
     }
   };
 
-  //revisar
   actualizarPedido = async (id, pedido) => {
     const pedidoExistente = await this.#model.obtenerPedido(id);
     if (!pedidoExistente) {
@@ -96,7 +93,6 @@ class Servicio {
     if (pedido.platos) {
       const platosFinal = await this.#procesarPlatos(pedido.platos);
       pedido.platos = platosFinal;
-      console.log(pedido.platos);
 
       pedido.total = this.#calcularTotal(pedido.platos);
     }
@@ -115,7 +111,8 @@ class Servicio {
     pedido.estado = "enviado";
 
     const pedidoEnviado = await this.#model.actualizarPedido(id, pedido);
-    enviarMail(pedidoEnviado);
+    const pdf = await generarPDFPedido(pedidoEnviado);
+    enviarMail(pedidoEnviado, pdf);
     return pedidoEnviado;
   };
 
@@ -148,7 +145,6 @@ class Servicio {
 
       total += p.total;
       totalPlatos += platosEnPedido;
-      console.log(p.total);
     }
     let promedioPlatos = totalPlatos / pedidos.length;
     let promedioPrecio = total / pedidos.length;

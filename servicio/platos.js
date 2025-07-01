@@ -25,8 +25,6 @@ class Servicio {
 
   obtenerPlatosPorTemperatura = async () => {
     const temperatura = await obtenerClima();
-    console.log(`Temperatura actual: ${temperatura}°C`);
-
     let platos = [];
     if (temperatura < 10) {
       platos = await this.#model.obtenerPlatoPorCalorias({ $gt: 600 });
@@ -47,18 +45,16 @@ class Servicio {
       const platoGuardado = await this.#model.guardarPlato(plato);
       return platoGuardado;
     } else {
-      //console.log(res.error)
       throw new Error(res.error.details[0].message);
     }
   };
 
   updatePlato = async (id, plato) => {
     const res = validar(plato);
-    if (res.result){
-    const platoActualizado = await this.#model.updatePlato(id, plato);
-    return platoActualizado;
-    }
-    else {
+    if (res.result) {
+      const platoActualizado = await this.#model.updatePlato(id, plato);
+      return platoActualizado;
+    } else {
       throw new Error(res.error.details[0].message);
     }
   };
@@ -66,34 +62,6 @@ class Servicio {
   borrarPlato = async (id) => {
     const platoEliminado = await this.#model.borrarPlato(id);
     return platoEliminado;
-  };
-
-  obtenerEstadisticas = async (opcion) => {
-    const platos = await this.#model.obtenerPlatos();
-    switch (opcion) {
-      case "cantidad":
-        return { cantidad: platos.length };
-
-      case "avg-precio":
-        return {
-          "precio promedio": +(
-            platos.reduce((acc, p) => acc + p.precio, 0) / platos.length
-          ).toFixed(2),
-        };
-
-      case "min-precio":
-        return {
-          "precio mínimo": +Math.min(...platos.map((p) => p.precio)).toFixed(2),
-        };
-
-      case "max-precio":
-        return {
-          "precio máximo": +Math.max(...platos.map((p) => p.precio)).toFixed(2),
-        };
-
-      default:
-        return { error: `opción estadistica '${opcion}' no soportada` };
-    }
   };
 }
 
