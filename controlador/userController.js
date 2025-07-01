@@ -26,7 +26,6 @@ class Controlador {
       const usuarioGuardado = await this.#servicio.guardarUsuario(usuario);
       res.json(usuarioGuardado);
     } catch (error) {
-      //res.status(500).json({ error: error.details[0].message })
       res.status(500).json({ error: error.message });
     }
   };
