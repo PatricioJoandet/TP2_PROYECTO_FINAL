@@ -9,7 +9,11 @@
     "start": "node app.js",
     "dev": "nodemon app.js --ignore /*.json",
     "test-manual": "node test/api-prueba-manual.js",
-    "test-gen-prod": "mocha test/producto.test.js --timeout 10000"
+    "test-gen-prod": "mocha test/producto.test.js --timeout 10000",
+    "test-platos": "mocha test/api-platos-ext.test.js --timeout 10000",
+    "test-users": "mocha test/api-users-ext.test.js --timeout 10000",
+    "test-pedidos": "mocha test/api-pedidos-ext.test.js --timeout 10000",
+    "manual": "node test/api-prueba-manual-restaurante.js"
   },
   "engines": {
     "node": ">=16"
@@ -30,6 +34,7 @@
     "nodemailer": "^7.0.3",
     "nodemon": "^3.1.10",
     "pdfkit": "^0.14.0",
+    "sinon": "^21.0.0",
     "supertest": "^7.1.1"
   }
 }

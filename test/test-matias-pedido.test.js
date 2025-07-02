@@ -8,8 +8,8 @@ const testMatisPedido = async () => {
     const pedidoResponse = await axios.post("http://localhost:8080/api/pedidos", {
       usuario: "685c5280ff2b45316c200475",
       platos: [
-        { plato: "6856d08b80fdb38c466ef887", cantidad: 2 }, // Papas fritas
-        { plato: "6858a4e3cc137084c40070b2", cantidad: 1 }, // Ensalada César
+        { plato: "6856d08b80fdb38c466ef887", cantidad: 2 }, 
+        { plato: "6858a4e3cc137084c40070b2", cantidad: 1 }, 
       ],
     })
 
@@ -22,7 +22,7 @@ const testMatisPedido = async () => {
       console.log(`   - ${plato.nombre} x${plato.cantidad} = $${plato.precio * plato.cantidad}`)
     })
 
-    // 2. Enviar pedido (genera PDF + email)
+    // 2. Enviar pedido (PDF + mail)
     console.log("\n📤 Enviando pedido a Springfield...")
     const envioResponse = await axios.patch(`http://localhost:8080/api/pedidos/enviar/${pedido._id}`)
 

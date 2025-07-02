@@ -36,7 +36,7 @@ class Servicio {
     }
     const res = validarUsuarioPut(usuario);
 
-    if (!res.result) {
+    if (res.result) {
       usuarioActualizado = await this.#model.actualizarUsuario(id, usuario);
     }
 
