@@ -1,5 +1,5 @@
 import UserMongo from "../model/DAO/userMongoDB.js";
-import { validar } from "./validaciones/users.js";
+import { validarUsuarioPost, validarUsuarioPut } from "./validaciones/users.js";
 
 class Servicio {
   #model;
@@ -19,7 +19,7 @@ class Servicio {
   };
 
   guardarUsuario = async (usuario) => {
-    const res = validar(usuario);
+    const res = validarUsuarioPost(usuario);
     if (res.result) {
       const usuarioGuardado = await this.#model.guardarUsuario(usuario);
       return usuarioGuardado;
@@ -29,7 +29,17 @@ class Servicio {
   };
 
   actualizarUsuario = async (id, usuario) => {
-    const usuarioActualizado = await this.#model.actualizarUsuario(id, usuario);
+    let usuarioActualizado = {};
+
+    if ("_id" in usuario) {
+      delete usuario._id;
+    }
+    const res = validarUsuarioPut(usuario);
+
+    if (!res.result) {
+      usuarioActualizado = await this.#model.actualizarUsuario(id, usuario);
+    }
+
     return usuarioActualizado;
   };
 

@@ -1,7 +1,7 @@
 import PedidosMongo from "../model/DAO/pedidosMongoDB.js";
 import platos from "./platos.js";
 import users from "./users.js";
-import { validar } from "./validaciones/pedidos.js";
+import { validarPedidoPost, validarPedidoPut } from "./validaciones/pedidos.js";
 import enviarMail from "./helpers/emailHelper.js";
 import generarPDFPedido from "./helpers/pdfHelper.js";
 import calcularDiaPedidos from "./helpers/diasHelper.js";
@@ -64,7 +64,7 @@ class Servicio {
   };
 
   guardarPedido = async (pedido) => {
-    const res = validar(pedido);
+    const res = validarPedidoPost(pedido);
     if (res.result) {
       const usuario = await this.#validarUsuario(pedido.usuario);
       const platosFinal = await this.#procesarPlatos(pedido.platos);
@@ -88,6 +88,11 @@ class Servicio {
     if (pedido.usuario) {
       const usuario = await this.#validarUsuario(pedido.usuario);
       pedido.email = usuario.email;
+    }
+
+    const res = validarPedidoPut(pedido);
+    if (!res.result) {
+      throw new Error(res.error.details[0].message);
     }
 
     if (pedido.platos) {

@@ -1,4 +1,5 @@
 import Servicio from "../servicio/platos.js";
+import moongoose from "mongoose";
 
 class Controlador {
   #servicio;
@@ -10,6 +11,10 @@ class Controlador {
   obtenerPlatos = async (req, res) => {
     try {
       const { id } = req.params;
+
+      if (!moongoose.Types.ObjectId.isValid(id) && id) {
+        return res.status(400).json({ error: "ID de plato inválido" });
+      }
       const platos = await this.#servicio.obtenerPlatos(id);
       res.json(platos);
     } catch (error) {
@@ -40,25 +45,40 @@ class Controlador {
 
   updatePlato = async (req, res) => {
     const { id } = req.params;
-    const plato = req.body;
-    const platoActualizado = await this.#servicio.updatePlato(id, plato);
-    res
-      .status(platoActualizado ? 200 : 404)
-      .json(platoActualizado ? platoActualizado : {});
+
+    if (!moongoose.Types.ObjectId.isValid(id) && id) {
+      return res.status(400).json({ error: "ID de plato inválido" });
+    }
+
+    try {
+      const plato = req.body;
+      if (!plato || Object.keys(plato).length === 0) {
+        return res.status(400).json({ error: "El body no puede estar vacío" });
+      }
+
+      const platoActualizado = await this.#servicio.updatePlato(id, plato);
+
+      res
+        .status(platoActualizado ? 200 : 404)
+        .json(
+          platoActualizado ? platoActualizado : { error: "Plato no encontrado" }
+        );
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
   };
 
   borrarPlato = async (req, res) => {
     const { id } = req.params;
+
+    if (!moongoose.Types.ObjectId.isValid(id) && id) {
+      return res.status(400).json({ error: "ID de plato inválido" });
+    }
+
     const platoEliminado = await this.#servicio.borrarPlato(id);
     res
       .status(platoEliminado ? 200 : 404)
       .json(platoEliminado ? platoEliminado : {});
-  };
-
-  obtenerEstadisticas = async (req, res) => {
-    const { opcion } = req.params;
-    const estadisticas = await this.#servicio.obtenerEstadisticas(opcion);
-    res.json({ estadisticas });
   };
 }
 
