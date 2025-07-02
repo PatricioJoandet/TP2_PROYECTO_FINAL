@@ -5,11 +5,9 @@ import RouterPlatos from "./router/platos.js";
 
 class Server {
   #port;
-  #persistencia;
 
-  constructor(port, persistencia) {
+  constructor(port) {
     this.#port = port;
-    this.#persistencia = persistencia;
   }
 
   start() {
@@ -33,7 +31,7 @@ class Server {
     // -----------------------------------------------
     //           API RESTful: users
     // -----------------------------------------------
-    app.use("/api/users", new RouterUsers(this.#persistencia).start());
+    app.use("/api/users", new RouterUsers().start());
 
     // -----------------------------------------------
     //           API RESTful: platos

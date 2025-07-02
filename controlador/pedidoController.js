@@ -3,8 +3,8 @@ import Servicio from "../servicio/pedidos.js";
 class Controlador {
   #servicio;
 
-  constructor(persistencia) {
-    this.#servicio = new Servicio(persistencia);
+  constructor() {
+    this.#servicio = new Servicio();
   }
 
   obtenerPedidos = async (req, res) => {
@@ -20,7 +20,7 @@ class Controlador {
   obtenerPedidoUser = async (req, res) => {
     try {
       const { userId } = req.params;
-      const pedidos = await this.#servicio.ob(userId);
+      const pedidos = await this.#servicio.obtenerPedidosPorUsuario(userId);
       res.json(pedidos);
     } catch (error) {
       res.status(500).json({ error: error.message });

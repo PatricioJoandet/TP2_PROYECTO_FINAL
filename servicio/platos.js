@@ -1,6 +1,6 @@
 import PlatosMongo from "../model/DAO/platosMongoDB.js";
 import obtenerClima from "./helpers/climaHelper.js";
-import { validar } from "./validaciones/platos.js";
+import { validarPlatoPost, validarPlatoPut } from "./validaciones/platos.js";
 
 class Servicio {
   #model;
@@ -40,7 +40,7 @@ class Servicio {
   };
 
   guardarPlato = async (plato) => {
-    const res = validar(plato);
+    const res = validarPlatoPost(plato);
     if (res.result) {
       const platoGuardado = await this.#model.guardarPlato(plato);
       return platoGuardado;
@@ -50,7 +50,7 @@ class Servicio {
   };
 
   updatePlato = async (id, plato) => {
-    const res = validar(plato);
+    const res = validarPlatoPut(plato);
     if (res.result) {
       const platoActualizado = await this.#model.updatePlato(id, plato);
       return platoActualizado;

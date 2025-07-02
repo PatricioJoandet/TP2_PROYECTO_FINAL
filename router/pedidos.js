@@ -4,8 +4,8 @@ import Controlador from "../controlador/pedidoController.js";
 class Router {
   #controlador;
 
-  constructor(persistencia) {
-    this.#controlador = new Controlador(persistencia);
+  constructor() {
+    this.#controlador = new Controlador();
   }
 
   start() {
@@ -13,6 +13,7 @@ class Router {
 
     router.get("/estadisticas", this.#controlador.estadisticas);
     router.get("/:id?", this.#controlador.obtenerPedidos);
+    router.get("/user/:userId", this.#controlador.obtenerPedidoUser);
     router.post("/", this.#controlador.guardarPedido);
     router.patch("/enviar/:id", this.#controlador.enviarPedido);
     router.put("/:id", this.#controlador.actualizarPedido);
