@@ -8,8 +8,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js --ignore /*.json",
-    "test-manual": "node test/api-prueba-manual.js",
-    "test-gen-prod": "mocha test/producto.test.js --timeout 10000",
     "test-platos": "mocha test/api-platos-ext.test.js --timeout 10000",
     "test-users": "mocha test/api-users-ext.test.js --timeout 10000",
     "test-pedidos": "mocha test/api-pedidos-ext.test.js --timeout 10000",
